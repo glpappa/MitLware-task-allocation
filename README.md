@@ -1,2 +1,5 @@
 # MitLware
-Repository for Metaheuristics in the Large
+
+
+For an experimental Scala library implementing MitL ideas, see [MitLware-scala](https://github.com/JerrySwan/MitLware-scala).
+
