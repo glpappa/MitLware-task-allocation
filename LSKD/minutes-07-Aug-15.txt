@@ -1,0 +1,100 @@
+
+Minutes of the LSKD meeting held on 07-Aug-15.
+================================================
+
+Attendees:
+------------------------
+
+Emma Hart 
+Leandro Minku
+Gisele Pappa
+Kevin Sim 
+Markus Wagner
+
+
+LSKD "definition":
+------------------------
+
+We will view LSKD as an offline activity, as the online case is being covered by "Solution Trajectory Mining". We will consider that:
+
++ there is a (possibly) large repository with information about:
+- Problem instances --> raw data + features describing them + ...
+- Results / solutions --> chromosome + fitness + ...
+- Algorithms and parameters
+
++ LSKD is concerned with mining such repository to select / build appropriate metaheuristics and choose parameters. Some topics that fit well with this are:
+
+- Offline hyperheuristics: if "appropriateness" depends on the features of the problem instances, this is closely related to the area of offline hyper-heuristics. The following paper touches upon online vs offline hyperheuristics:
+
+E. K. Burke, M. Gendreau, M. Hyde, G. Kendall, G. Ochoa, E. Ozcan and R. Qu (2013) Hyper-heuristics: A Survey of the State of the Art, Journal of the Operational Research Society. 206(1): 241-264 
+http://www.palgrave-journals.com/jors/journal/v64/n12/full/jors201371a.html 
+
+The following paper highlights the connections between hyper-heuristics and meta-learning:
+
+Contrasting meta-learning and hyper-heuristic research: the role of evolutionary algorithms
+GL Pappa, G Ochoa, MR Hyde, AA Freitas… - Genetic Programming and
+Evolvable Machines, 2014
+http://link.springer.com/article/10.1007/s10710-013-9186-9#page-1
+
+- Parameters tuning based on previous problem instances:
+
+S. Nallaperuma,  M. Wagner and F. Neumann*
+Analyzing the effects of instance features and algorithm parameters for max–min ant system and the traveling salesperson problem
+Front. Robot. AI, 20 July 2015 
+http://journal.frontiersin.org/article/10.3389/frobt.2015.00018/full
+From Markus: we generate instances, analyse different features, feed everything into a model generator, and then predict pretty accurately which parameters should be chosen to achieve the best performance of an algorithm. The only problem is that the overall process of instance generation and analysis is quite resource-consuming.
+
+- How repositories should look like
+
+Kevin's presentation at the MitL meeting in Nottingham talks about how one can create performance profiles of meta-heuristics on problem instances.
+
+- Learning algorithms:
+
+In order to mine data, we will need to use learning algorithms. At the moment, we may not have anything that is really large scale. The applications of mining for meta-heuristics have so far been much smaller scale than they could potentially be. I suggest that we work considering existing mining approaches and also potentially larger scale problems that researchers could investigate in the future. In this context, learning algorithms able to perform one-pass learning may be useful. An example is:
+
+N. C. Oza and S. Russell, “Experimental comparisons of online and batch versions of bagging and boosting,” in Proc. of ACM SIGKDD, San Francisco, 2001, pp. 359–364
+
+
+
+
+Theme name:
+------------------------
+
++ The group expressed the wish to change the theme's name to "Towards Large Scale Knowledge Discovery". This is because we currently don't have very large scale repositories in the sense that traditional ML algorithms would struggle to mine them. However, given what can be potentially achieved if we have such large repositories, it is worth moving towards large scale knowledge discovery in meta-heuristics and our tools should be able to support this move. 
+
+
+
+Concrete problem:
+------------------------
+
++ A couple of people mentioned that Jerry said in GECCO that he would provide a concrete example of problem, so that all WGs could use it as an example to work on. The group felt it's better to wait for the concrete example before we start the task of defining how a repository should look like (e.g., how to represent problem instances, algorithms and solutions).
+
+
+
+Action Items
+--------------------------
+
++ Leandro: Talk with Jerry about change of theme's name to "Towards Large Scale Knowledge Discovery"
+
++ Leandro: Talk with Jerry about his preparation of a concrete example of problem for all of us to work with? E.g., PSP?
+
++ Leandro: Add initial files to GitHub
+
++ All: DEADLINE 31st August 
+
+Write up about existing literature on: 
+
+Gisele: offline hyperheuristics.
+Markus: automated parameters tuning.
+Kevin: representing algorithms' performance.
+Ema: represeingin problem instances.
+Leandro: learning algorithms including one-pass algorithms.
+ 
+This should help us to determine what exactly we need from proposed frameworks.
+
++ All: Add terms + definitions as we work on the other tasks.
+
+
+
+
+
