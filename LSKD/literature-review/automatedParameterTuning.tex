@@ -1,0 +1,143 @@
+\documentclass{article}
+
+\title{---MitL---\\Towards Large Scale Knowledge Discovery:\\ Automated Parameter Tuning (or: ``Algorithm Configuration'')}
+\author{Markus Wagner (and maybe others in the future)
+}
+\date{}
+
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{color}
+
+\newcommand{\remark}[1]{\textcolor{red}{\em #1}}
+
+\newcommand{\ignore}[1]{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent\url{https://github.com/MitLware/MitLware-task-allocation/issues/3}\\
+Write a few paragraphs about existing literature on offline meta-heuristics automated parameters tuning. The aim of the literature review is for us to check what sort of techniques a new meta-heuristics framework should cover, including existing techniques and potentially future techniques.
+
+\remark{Are we using British English or American English?}
+\end{abstract}
+
+\section{Introduction}
+
+The remainder of this article is organized as follows.
+Section~\ref{sec:previous} gives account of previous work.
+In Section~\ref{sec:previous} we outline future directions.
+
+
+\paragraph{From Jerry/Minku email.}
+analytically-exploitable problem domain
+
+claim that it ideally needs
+to allow a high degree of abstraction away from specific underlying
+problems*. For suitably abstracted (but still normalizable) features,
+very general cross-domain learning might then be possible. 
+
+I'd therefore urge your WG in particular to work at as high a conceptual
+level as has a reasonable chance of being meaningful. One option would
+be to use the following metrics as features: a) fitness-distance
+correlation b) coordinate position in Blum's
+"Intensification-Diversification-Randomness" space as sketched on slide
+25 of the following: ...
+
+Practical upshot: suggest that you come up with some use-cases that
+employ problem-independant features: IMO this nicely demonstrates that
+`selective HH' can be much more general than the de facto understanding
+of them. 
+
+*  Just a placeholder for some future discussion, but we'd ideally still
+also want the standard to allow the description of concrete
+structurally/algebraically rich feature descriptions, e.g. knowing
+that a "feature vector" actually represents a permutation. I believe
+Gisele has recently been looking into structural ML, and I've done some
+work on `algebraic machine learning', where the fact we have a
+permutation is exploited by the learning process. 
+
+
+\section{Existing Techniques}\label{sec:previous}
+
+Algorithm configuration methods take a parameterised target algorithm, a performance metric and a set of example data, and aim to find a parameter configuration that performs as well as possible on a given data set~\cite{Geschwender2014cloud}. 
+
+As \citet{DBLP:journals/jair/HutterHLS09} highlight, configuring algorithms automatically to achieve high performance is becoming increasingly relevant and important in many areas of academia and industry:
+
+\begin{itemize}
+	\item Development of complex algorithms: as setting the parameters of a heuristic algorithm is a time-consuming task, an automation can lead to time-savings and potentially achieve better results than manual methods.
+	\item Empirical studies: to investigate whether one algorithm if fundamentally superior, automated configurations can reduce the influence of manual configuration optimisation done by the algorithm's authors.
+	\item Practical use: since end users are not necessarily aware of the impact of an algorithm's parameter setting on its performance, automatic configuration can be used to improve upon the performance of default parameter settings.
+\end{itemize}
+
+Algorithm configuration systems such as ParamILS~\cite{DBLP:journals/jair/HutterHLS09}, GGA~\cite{Ansotegui2009genderbasedga}, irace~\cite{Birattari2010irace}, and SMAC~\cite{Hutter2011smac} have achieved performance improvements in a broad range of applications. For example, ParamILS was able to achieve an average speedup of over an order of magnitude of CPLEX version 10 on previously-unseen test instances. That version of CPLEX has about 80 parameters that affect the solver’s search mechanism and can be configured by the user to improve performance. 
+
+The inherent drawback of such iterative approaches is that they often require substantial computational resources to find good configurations, as the algorithm is run repeatedly on the given instances.  
+One approach to address this is through parallelising the search in regular computing environments~\cite{Hutter2012parallel} and through the use of cloud services~\cite{Geschwender2014cloud}. 
+
+A fundamentally different approach to this problem was taken by~\cite{Nallaperuma2015antsTsp}. 
+There the authors analyse the given instances, build performance models for different algorithm configurations, and then use these models to predict the best performing configuration with accuracy. TSP ACO
+
+
+\subsection{Configuration that uses instance features}
+
+\cite{Nallaperuma2015antsTsp}
+Ant colony optimization (ACO) performs very well on many hard optimization problems, even though no good worst-case guarantee can be given. Understanding the effects of different ACO parameters and the structural features of the considered problem on algorithm performance has become an interesting problem. In this paper, we study structural features of easy and hard instances of the traveling salesperson problem for a well-known ACO variant called Max–Min Ant System (MMAS) for several parameter settings. The four considered parameters are the importance of pheromone values, the heuristic information, the pheromone update strength, and the number of ants. We further use this knowledge to predict the best parameter setting for a wide range of instances taken from TSPLIB.
+
+\subsection{Configuration that does not use instance features}
+
+... anything?
+
+
+
+\subsection{Existing Libraries}
+
+AClib~\cite{DBLP:conf/lion/HutterLFLHLS14} \url{http://www.aclib.net}
+AClib is a benchmark library for instances of the algorithm configuration problem: given a parameterised algorithm $A$, a set of problem instances $S$, and a performance metric $m$, find a parameter setting of $A$ that minimizes metric $m$ (e.g. mean runtime) across $S$. 
+
+The goal of AClib is to define a set of standard benchmarks for algorithm configuration in order to provide a solid foundation for empirical science in the field, much like SATlib, TSPlib, and MIPlib have done in their respective fields.  
+
+
+Challenges:
+\cite{Schneider2012homogeneity}
+Automated configuration procedures play an increasingly prominent role in realising the performance potential inherent in highly parametric solvers for a wide range of computationally challenging problems. However, these configuration procedures have difficulties when dealing with inhomogenous instance sets, where the relative difficulty of problem instances varies between configurations of the given parametric algorithm. 
+--
+One fundamental challenge in automated algorithm configuration arises from the fact that the relative difficulty of problem instances from a given set or distribution may vary between different configurations of the algorithm to be configured. This poses the risk that an iterative configuration process is misguided by the problem instances con- sidered at early stages. For this reason, the performance of ParamILS [10, 9], one of the strongest and most widely configuration procedures currently available, significantly depends on the ordering of the problem instances used for training [1, 9], and the same can be expected to hold for other algorithm configuration techniques. Therefore, the question to which degree the relative difficulty of problem instances varies between con- figurations of a parametric algorithm is of considerably interest. Indeed, precisely this question has been addressed in recent work by Hutter et al. [11], who refer to instance sets for which the same instances are easy and hard for different configuration as homo- geneous and ones for which this is markedly not the case as inhomogeneous. They state that inhomogeneous instance sets are “problematic to address with both manual and au- tomated methods for offline algorithm configuration” [11] and list three approaches for addressing this issue: clustering of homogeneous instance sets [12, 13], portfolio-based algorithm selection [14, 15] and per-instance algorithm configuration [16, 17]. They furthermore use a heat map visualization to qualitatively assess homogeneity.
+
+
+
+
+\section{Future Techniques}\label{sec:future}
+\begin{itemize}
+	\item Higher degree of automation and automated assessment
+	\item dealing with missing data
+	\item learning algorithms to become more abstract
+\end{itemize}
+
+\bibliographystyle{abbrvnat}
+\bibliography{bibliography}
+
+
+
+\ignore{
+ParamILS~\cite{DBLP:journals/jair/HutterHLS09}:
+The identification of performance-optimizing parameter settings is an important part of the development and application of algorithms.
+We describe an automatic framework for this algorithm configuration problem. More formally, we provide methods for optimizing a target algorithm’s performance on a given class of problem instances by varying a set of ordinal and/or categorical parameters. We review a family of local-search-based algorithm configuration procedures and present novel techniques for accelerating them by adaptively limiting the time spent for evaluating individual configurations. We describe the results of a comprehensive experimental evaluation of our methods, based on the configuration of prominent complete and incomplete algorithms for SAT. We also present what is, to our knowledge, the first published work on automatically configuring the CPLEX mixed integer programming solver. All the algorithms we considered had default parameter settings that were manually identified with considerable effort. Nevertheless, using our automated algorithm configuration procedures, we achieved substantial and consistent performance improvements.
+
+Many high-performance algorithms have parameters whose settings control important aspects of their behaviour. 
+%This is particularly the case for heuristic procedures used for solving computa- tionally hard problems. 1 As an example, consider CPLEX, a commercial solver for mixed integer programming problems.2 CPLEX version 10 has about 80 parameters that affect the solver’s search mechanism and can be configured by the user to improve performance. There are many acknowl- edgements in the literature that finding performance-optimizing parameter configurations of heuris- tic algorithms often requires considerable effort (...)
+
+In many cases, the tedious task of finding performance-optimizing parameter configurations is performed manually in an ad-hoc way. Automating this task is of high practical relevance in several contexts:
+
+\begin{itemize}	
+	\item Development of complex algorithms 
+	Setting the parameters of a heuristic algorithm is a highly labour-intensive task, and indeed can consume a large fraction of overall development time. The use of automated algorithm configuration methods can lead to significant time savings and potentially achieve better results than manual, ad-hoc methods.
+	\item Empirical studies, evaluations, and comparisons of algorithms 
+	A central question in comparing heuristic algorithms is whether one algorithm outperforms another because it is fundamentally superior, or because its developers more successfully optimized its parameters (Johnson, 2002). Automatic algorithm configuration methods can mitigate this problem of unfair comparisons and thus facilitate more meaningful comparative studies.
+	\item Practical use of algorithms 
+	The ability of complex heuristic algorithms to solve large and hard problem instances often depends critically on the use of suitable parameter settings. End users often have little or no knowledge about the impact of an algorithm’s parameter settings on its performance, and thus simply use default settings. Even if it has been carefully optimized on a standard benchmark set, such a default configuration may not perform well on the particular problem instances encountered by a user. Automatic algorithm configuration methods can be used to improve performance in a principled and convenient way.
+\end{itemize}
+}
+
+\end{document}
