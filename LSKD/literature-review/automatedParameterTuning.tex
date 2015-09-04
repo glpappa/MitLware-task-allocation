@@ -1,6 +1,6 @@
 \documentclass{article}
 
-\title{---MitL---\\Towards Large Scale Knowledge Discovery:\\ Automated Parameter Tuning (or: ``Algorithm Configuration'')}
+\title{---MitL---\\Towards Large Scale Knowledge Discovery:\\ Automated Parameter Tuning (or: ``Algorithm Configuration'' which is more abstract)}
 \author{Markus Wagner (and maybe others in the future)
 }
 \date{}
@@ -30,7 +30,7 @@ Section~\ref{sec:previous} gives account of previous work.
 In Section~\ref{sec:previous} we outline future directions.
 
 
-\paragraph{From Jerry/Minku email.}
+\paragraph{Note from Jerry/Minku email.}
 analytically-exploitable problem domain
 
 claim that it ideally needs
@@ -39,7 +39,9 @@ problems*. For suitably abstracted (but still normalizable) features,
 very general cross-domain learning might then be possible. 
 
 I'd therefore urge your WG in particular to work at as high a conceptual
-level as has a reasonable chance of being meaningful. One option would
+level as has a reasonable chance of being meaningful. 
+\remark{Markus: I am very low-level right now} 
+One option would
 be to use the following metrics as features: a) fitness-distance
 correlation b) coordinate position in Blum's
 "Intensification-Diversification-Randomness" space as sketched on slide
@@ -59,9 +61,7 @@ work on `algebraic machine learning', where the fact we have a
 permutation is exploited by the learning process. 
 
 
-\section{Existing Techniques}\label{sec:previous}
-
-Algorithm configuration methods take a parameterised target algorithm, a performance metric and a set of example data, and aim to find a parameter configuration that performs as well as possible on a given data set~\cite{Geschwender2014cloud}. 
+\section{Existing: Low-Level Technologies}\label{sec:previous}
 
 As \citet{DBLP:journals/jair/HutterHLS09} highlight, configuring algorithms automatically to achieve high performance is becoming increasingly relevant and important in many areas of academia and industry:
 
@@ -71,48 +71,34 @@ As \citet{DBLP:journals/jair/HutterHLS09} highlight, configuring algorithms auto
 	\item Practical use: since end users are not necessarily aware of the impact of an algorithm's parameter setting on its performance, automatic configuration can be used to improve upon the performance of default parameter settings.
 \end{itemize}
 
-Algorithm configuration systems such as ParamILS~\cite{DBLP:journals/jair/HutterHLS09}, GGA~\cite{Ansotegui2009genderbasedga}, irace~\cite{Birattari2010irace}, and SMAC~\cite{Hutter2011smac} have achieved performance improvements in a broad range of applications. For example, ParamILS was able to achieve an average speedup of over an order of magnitude of CPLEX version 10 on previously-unseen test instances. That version of CPLEX has about 80 parameters that affect the solver’s search mechanism and can be configured by the user to improve performance. 
+Algorithm configuration methods take a parameterised target algorithm, a performance metric and a set of example data, and aim to find a parameter configuration that performs as well as possible on a given data set. 
+Methods such as ParamILS~\cite{DBLP:journals/jair/HutterHLS09}, GGA~\cite{Ansotegui2009genderbasedga}, irace~\cite{Birattari2010irace}, and SMAC~\cite{Hutter2011smac} have achieved performance improvements in a broad range of applications. For example, ParamILS was able to achieve an average speedup of over an order of magnitude of CPLEX version 10 on previously-unseen test instances. That version of CPLEX has about 80 parameters that affect the solver’s search mechanism and can be configured by the user to improve performance. 
 
 The inherent drawback of such iterative approaches is that they often require substantial computational resources to find good configurations, as the algorithm is run repeatedly on the given instances.  
-One approach to address this is through parallelising the search in regular computing environments~\cite{Hutter2012parallel} and through the use of cloud services~\cite{Geschwender2014cloud}. 
+To a limited extent, this issue has already been addressed through parallelising the search in regular computing environments~\cite{Hutter2012parallel} and by using cloud services~\cite{Geschwender2014cloud}. 
 
-A fundamentally different approach to this problem was taken by~\cite{Nallaperuma2015antsTsp}. 
-There the authors analyse the given instances, build performance models for different algorithm configurations, and then use these models to predict the best performing configuration with accuracy. TSP ACO
+Interestingly, one fundamental challenge in automated algorithm configuration arises from the fact that the relative difficulty of problem instances from a given set or distribution may vary between different configurations of the algorithm to be configured. This poses the risk that an iterative configuration process is misguided by the problem instances considered at early stages~\cite{Schneider2012homogeneity}. For example, the performance of ParamILS significantly depends on the ordering of the problem instances used for training, and the same is expected to hold for other algorithm configuration techniques. 
 
+One solution to the runtime problem and to the instance ordering problem is the per-instance configuration of algorithm as used by~\citet{Nallaperuma2015antsTsp}. 
+There, the authors first investigate statistical features of a wide range of TSP instances and their impact on the appropriate choice of these parameters for a particular algorithm. 
+The resulting performance models are used to quickly determine the best performing parameter choice for a new instance with high accuracy.
 
-\subsection{Configuration that uses instance features}
-
-\cite{Nallaperuma2015antsTsp}
-Ant colony optimization (ACO) performs very well on many hard optimization problems, even though no good worst-case guarantee can be given. Understanding the effects of different ACO parameters and the structural features of the considered problem on algorithm performance has become an interesting problem. In this paper, we study structural features of easy and hard instances of the traveling salesperson problem for a well-known ACO variant called Max–Min Ant System (MMAS) for several parameter settings. The four considered parameters are the importance of pheromone values, the heuristic information, the pheromone update strength, and the number of ants. We further use this knowledge to predict the best parameter setting for a wide range of instances taken from TSPLIB.
-
-\subsection{Configuration that does not use instance features}
-
-... anything?
+%The potential strength of the performance model relies on the wide range and on the diversity of the training instances, and on the expressiveness of selected structural features of problem hardness for algorithm instances. 
+The training set is crucial for the success of this per-instance approach, as a large and inhomogeneous set needs to be used. Existing collections of instances, such as SATlib, TSPlib, and MIPlib, do not necessarily cover a wide range of instance features, which is why researchers have recently begun to evolve instance sets that explicitly cover a wide range of difficulties and feature values~\cite{SmithMiles2010tspfirst,Mersmann2012twoopt,Nallaperuma2013christofides,SmithMiles2015evolvingInstanceSpace}.  
 
 
 
-\subsection{Existing Libraries}
-
-AClib~\cite{DBLP:conf/lion/HutterLFLHLS14} \url{http://www.aclib.net}
-AClib is a benchmark library for instances of the algorithm configuration problem: given a parameterised algorithm $A$, a set of problem instances $S$, and a performance metric $m$, find a parameter setting of $A$ that minimizes metric $m$ (e.g. mean runtime) across $S$. 
-
-The goal of AClib is to define a set of standard benchmarks for algorithm configuration in order to provide a solid foundation for empirical science in the field, much like SATlib, TSPlib, and MIPlib have done in their respective fields.  
+On a slightly higher ``meta level'': AClib~\cite{DBLP:conf/lion/HutterLFLHLS14} \url{http://www.aclib.net} is a benchmark library for instances of the algorithm configuration problem: given a parameterised algorithm $A$, a set of problem instances $S$, and a performance metric $m$, find a parameter setting of $A$ that minimizes metric $m$ (e.g. mean runtime) across $S$. 
 
 
-Challenges:
-\cite{Schneider2012homogeneity}
-Automated configuration procedures play an increasingly prominent role in realising the performance potential inherent in highly parametric solvers for a wide range of computationally challenging problems. However, these configuration procedures have difficulties when dealing with inhomogenous instance sets, where the relative difficulty of problem instances varies between configurations of the given parametric algorithm. 
---
-One fundamental challenge in automated algorithm configuration arises from the fact that the relative difficulty of problem instances from a given set or distribution may vary between different configurations of the algorithm to be configured. This poses the risk that an iterative configuration process is misguided by the problem instances con- sidered at early stages. For this reason, the performance of ParamILS [10, 9], one of the strongest and most widely configuration procedures currently available, significantly depends on the ordering of the problem instances used for training [1, 9], and the same can be expected to hold for other algorithm configuration techniques. Therefore, the question to which degree the relative difficulty of problem instances varies between con- figurations of a parametric algorithm is of considerably interest. Indeed, precisely this question has been addressed in recent work by Hutter et al. [11], who refer to instance sets for which the same instances are easy and hard for different configuration as homo- geneous and ones for which this is markedly not the case as inhomogeneous. They state that inhomogeneous instance sets are “problematic to address with both manual and au- tomated methods for offline algorithm configuration” [11] and list three approaches for addressing this issue: clustering of homogeneous instance sets [12, 13], portfolio-based algorithm selection [14, 15] and per-instance algorithm configuration [16, 17]. They furthermore use a heat map visualization to qualitatively assess homogeneity.
-
-
-
-
-\section{Future Techniques}\label{sec:future}
+\section{Future: High-Level Techniques}\label{sec:future}
 \begin{itemize}
-	\item Higher degree of automation and automated assessment
+	\item higher degree of automation and automated assessment
 	\item dealing with missing data
-	\item learning algorithms to become more abstract
+	\item user preferences for a particular area of the instance/feature space
+	\item learning algorithms to become more abstract, e.g. to work on permutations
+	\item meta: fitness distance correlation (todo: read)
+	\item meta: Blum's intensification-diversification-randomness (todo: read~\cite{Blum:2003:MCO:937503.937505})
 \end{itemize}
 
 \bibliographystyle{abbrvnat}
@@ -138,6 +124,29 @@ In many cases, the tedious task of finding performance-optimizing parameter conf
 	\item Practical use of algorithms 
 	The ability of complex heuristic algorithms to solve large and hard problem instances often depends critically on the use of suitable parameter settings. End users often have little or no knowledge about the impact of an algorithm’s parameter settings on its performance, and thus simply use default settings. Even if it has been carefully optimized on a standard benchmark set, such a default configuration may not perform well on the particular problem instances encountered by a user. Automatic algorithm configuration methods can be used to improve performance in a principled and convenient way.
 \end{itemize}
+
+
+
+Challenges:
+
+Automated configuration procedures play an increasingly prominent role in realising the performance potential inherent in highly parametric solvers for a wide range of computationally challenging problems. However, these configuration procedures have difficulties when dealing with inhomogenous instance sets, where the relative difficulty of problem instances varies between configurations of the given parametric algorithm. 
+--
+One fundamental challenge in automated algorithm configuration arises from the fact that the relative difficulty of problem instances from a given set or distribution may vary between different configurations of the algorithm to be configured. This poses the risk that an iterative configuration process is misguided by the problem instances considered at early stages~\cite{Schneider2012homogeneity}. For this reason, the performance of ParamILS significantly depends on the ordering of the problem instances used for training, and the same can be expected to hold for other algorithm configuration techniques. 
+Therefore, the question to which degree the relative difficulty of problem instances varies between configurations of a parametric algorithm is of considerably interest. Indeed, precisely this question has been addressed in recent work by Hutter et al. [11], who refer to instance sets for which the same instances are easy and hard for different configuration as homogeneous and ones for which this is markedly not the case as inhomogeneous. They state that inhomogeneous instance sets are “problematic to address with both manual and au- tomated methods for offline algorithm configuration” [11] and list three approaches for addressing this issue: clustering of homogeneous instance sets [12, 13], portfolio-based algorithm selection [14, 15] and per-instance algorithm configuration [16, 17]. They furthermore use a heat map visualization to qualitatively assess homogeneity.
+
+
+Instance availability:
+
+instance generation
+
+\cite{Mersmann2012twoopt,Nallaperuma2013christofides}
+With this paper we contribute to the understanding of the success of 2-opt based local search algorithms for solving the traveling salesman problem (TSP). Although 2-opt is widely used in practice, it is hard to understand its success from a theoretical perspective. We take a statistical approach and examine the features of TSP instances that make the problem either hard or easy to solve. As a measure of problem difficulty for 2-opt we use the approximation ratio that it achieves on a given instance. Our investigations point out important features that make TSP instances hard or easy to be approximated by 2-opt.
+
+\cite{Nallaperuma2013christofides}
+Understanding the behaviour of well-known algorithms for classical NP-hard optimisation problems is still a difficult task. With this paper, we contribute to this research direction and carry out a feature based comparison of local search and the well-known Christofides approximation algorithm for the Traveling Salesperson Problem. We use an evolutionary al- gorithm approach to construct easy and hard instances for the Christofides algorithm, where we measure hardness in terms of approximation ratio. Our results point out impor- tant features and lead to hard and easy instances for this fa- mous algorithm. Furthermore, our cross-comparison gives new insights on the complementary benefits of the different approaches.
+
+
+
 }
 
 \end{document}
