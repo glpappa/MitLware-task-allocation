@@ -1,0 +1,138 @@
+\documentclass[a4paper]{article}
+
+\usepackage{hyperref}
+\usepackage[sort&compress]{natbib}
+
+\begin{document}
+
+\title{Large-scale knowledge discovery: landscapes, sensitivity, structure and fitness models}
+\author{Alexander Brownlee (sbr@cs.stir.ac.uk)}
+
+\maketitle
+
+\section{Introduction}
+The intent of this document is to briefly summarise existing approaches to categorising and capturing different aspects of problems tackled by metaheuristics.
+This includes both problem instances/features and solutions/chromosomes and aims to inform development of a new framework for metaheuristics.
+The topics covered here (landscapes, sensitivity, structure/linkage and fitness models) are also relevant to Solution Trajectory Mining, although with the exception of online fitness models (surrogates) are mostly related to static features of problems.
+
+\section{Fitness landscapes}
+% - ruggedness, autocorrelation
+% - FDC, FD plots Fitness distance plots (as described in \cite{Hoos2005})
+% - local optima networks
+
+Fitness landscapes and related techniques are frequently used to describe static features of the search space.
+These are in practice partly determined by the problem and largely determined by the encoding chosen for solutions and the operators -- these will determine the neighbourhoods of solutions.
+Examples of features captured by landscapes include: isolation, deception, multimodality, local optima, ruggedness/smoothness, and neutrality/plateaux.
+A fitness landscape with isolation is hard for EAs, but other characteristics may not be related too much to the hardness of fitness functions \cite{Naudts2000}.
+Usually these features are measured by probing the search space, either by using a grid or randomly generated points, or by a random walk starting with a seed solution.
+
+A few such measures are:
+\begin{description}
+	\item[Fitness-distance correlation] \cite{Jones1995}, see also fitness distance plot \cite{Hoos2005}. Measuring how predictably the fitness of solutions varies with their distance from the global optimum. A strong negative FDC means that fitness tends to decrease as distance from the optimum increases; that is, the problem is not deceptive and the landscape smooth.
+	\item[Correlation length and operator correlation] \cite{Manderick1991} [lacking access to original text]
+	\item[Fitness variance] \cite{Radcliffe1994} [lacking access to original text]
+	\item[Autocorrelation] \cite{Hoos2005} a measure of the landscape's ruggedness. Start with a randomly generated solution, and perform a random walk about the search space using single perturbations. An autocorrelation coefficient close to 1 means that neighbouring solutions in the search space tend to be similar in fitness; this implies that the fitness landscape is fairly smooth rather than rugged.
+\end{description}
+
+Computing the exact value of such measures usually is exponential in the problem size due to the fact that the search space is exponentially large \cite{Naudts2000,He2007,Jansen2001}.
+%Inherent flaws also exist in the common hardness measures such as epistasis variance, fitness-distance correlation, and epistasis correlation \cite{Reeves1999}. [from He2015]
+
+%\cite{Mylavarapu2013} `connections of landscape theory with algebraic combinatorics and random graph theory'
+%"random projections and random feature selection methods for their ability to serve as a means of dimensionality reduction for classification"
+
+An approach based on fitness levels has hard fitness functions classified into two types: ``wide gap'' and ``long path'' problems \cite{He2003}. With ``wide
+gap'' problems, wide gaps between fitness levels cause an EA to be trapped at a fitness level. With ``long-path'' problems, to reach an optimum the EA has to take a long
+path (i.e. many levels).
+
+Local Optima Networks (LONs) are a network-based model of combinatorial fitness landscapes capturing the structure and topology of local optima \cite{Ochoa2015,Verel2011}.
+Local optima of the underlying optimisation problem are represented by vertices; and possible transitions among them using a given search operator are represented by edges.
+Graph properties (e.g. density/sparsity, in/out-degrees) of LONs may be useful in classifying problems.
+
+With all of these methods, the requirements for a framework are fairly basic:
+\begin{enumerate}
+	\item Ability to generate solutions at random
+	\item Ability to generate solutions according to rules / experimental design (e.g. latin hypercube)
+	\item Ability to access variation operators to vary / generate solutions outwith the optimisation process
+\end{enumerate}
+
+\section{Sensitivity}
+% - use in optimisation
+% - narrowing the search space
+% - how does it relate to optimisation (convergence - see notes from J Rowe's tutorial)
+% - look for articles citing Saltelli SA book, talking about optimisation
+
+Global sensitivity analysis (SA) \cite{Saltelli2008} aims to identify the most important variables in a parameter optimisation problem (i.e. those to which the objectives are most \emph{sensitive}).
+Global SA is usually performed by generating a uniformly distributed set of sample solutions, and running a series of statistical tests or fitting a regression model using different variables.
+Sensitivity varies depending on locale in the search space \cite{Chabin2015}, so global sensitivities will be different to the sensitivities around a local optima.
+There is a wide body of separate work in SA, but there are also many examples where SA is combined with an EA search in some way to support decision making or simplify the problem.
+
+Global SA can be used to reduce the number of decision variables in the problem, reducing the search space e.g. \cite{Eisenhower2012a,Eisenhower2012,Fu2012}.
+For the described approaches, the requirements for a framework are the same as for fitness landscapes.
+
+%\cite{Harman2009} explore sensitivity of the cost estimates of requirements for the Next Release Problem 
+
+In an online context, the trajectory of an EA can also be mined to discover sensitivities, e.g. \cite{Wright2012,Paula2011}.
+This also extends to the models learned by EDAs as they run \cite{Brownlee2013,Hauschild2009,Santana2009,Yu2009,Santana2011} or the covariance matrix in CMA-ES \cite{Muller2007}.
+
+\section{Structure, linkage, epistasis and separability}
+% - optimisers where structure is known (non-structure-learning EDAs)
+% - problem specific crossover/mutation operators
+
+
+Concepts of structure, linkage and separability have been around the EA and metaheuristic communities for many years.
+\emph{Structure} in particular seems to have many definitions in the literature, ranging from dependencies between discrete variables to the global fitness landscape.
+Here we take structure to mean dependencies or correlations between variables or component parts of a problem.
+A \emph{separable} problem has independent subcomponents (e.g. groups of variables that are correlated or interdependent in some way), each of which could be optimised independently.
+This is of particular use in large scale problems where decreasing the search space size can be very beneficial (e.g. \cite{Yang2008,Omidvar2010}, which use random grouping of variables where separability is unknown).
+Epistasis variance \cite{Davidor1991} and Walsh analysis \cite{Bethke1980,Goldberg1989a,Goldberg1989b} have been proposed as methods for evaluating structure in this sense.
+
+There is growing interest in approaches that explicitly make use of the problem structure to increase the search efficiency, for example \cite{Chicano2014,Whitley2012}.
+Estimation of Distribution Algorithms (EDAs) \cite{Larranaga2002,Lozano2006,Hauschild2011a} make a model of the distribution of fitness in the current population and sample it with a bias towards producing highly fit solutions.
+The model is usually based on value combinations of the solution variables, and is often a probabilistic graphical model (PGM).
+The PGM may be either directed (a Bayesian network) or undirected (a Markov network).
+The structure of the PGM (edges in the graph) represents dependencies between the variables in the problem.
+These dependencies can either be supplied to the algorithm as part of the problem definition or learned from samples of solutions.
+Approaches to learning the structure include statistical independence tests (e.g. Chi-square), scoring metrics on the model (e.g. K2) or probing solutions (e.g. linkage detection algorithm \cite{Heckendorn2004}).
+
+There has been some work looking at structure as an indicator of problem hardness (e.g. \cite{Echegoyen2013}), particularly when the structure assumed by the search algorithm is flawed in some way.
+This can be in terms of a probabilistic model, or the structure assumed when designing operators like crossover and mutation).
+In the field of EDAs there are many articles on finding ``essential'' or ``necessary'' structure \cite{Santana2009, Hauschild2009, Echegoyen2007, Kallel_et_al:2000, Muhlenbein2000, Santana2009a,Santana2005,Lima2010,Radetic2010,Pelikan2002a}, ensuring that important dependencies are captured while avoiding erroneous (spurious) dependencies \cite{Muhlenbein2000,Thierens2011,Christie2014,Brownlee2015}.
+Structure can also be used to guide more conventional genetic operators like crossover and mutation, e.g. \cite{Zhang2007}.
+
+In terms of a framework, it would be desirable to be able to define ``structure'' for a problem, and have this available to the search algorithm (there would likely be some feedback as the algorithm discovers such features during the search).
+In abstract terms this would require a means of representing a set of sub-problems each of which is independent.
+
+\section{Fitness models}
+This section is much more related to solution trajectories and online learning, but is included here as there is some crossover.
+In particular, for some problems, the a fitness model or surrogate is trained ahead of the metaheuristic run, and left unchanged.
+While a model can be specified as part of the problem (in effect just another fitness function), more relevant to LKSD is where machine learning approaches are used to discover a model.
+In no particular order, fitness modelling and approximation approaches include:
+
+\begin{description}
+  \item[Artificial neural networks (ANNs)] \cite{Ochoa1997,Jin:04b,Syberfeldt2008,Li2008,Furtuna2011}
+  \item[Polynomial regression] \cite{Zhou2005}
+  \item[Gaussian random fields] \cite{Emmerich2006}
+  \item[Bayesian classifiers] \cite{Miquelez_et_al:2004}: groups individuals of similar fitness into classes, used to generate individuals of high fitness
+  \item[Sampling of PGM] \cite{Sastry2006}: models of fitness are derived by inducing a structure from a probabilistic model and using linear regression to estimate parameters. \cite{Ochoa2010} the author builds a surrogate from a Gibbs model which is derived from the distribution learnt by an EDA
+  \item[Statistical model of solution history] \cite{Takahashi2003,Sano2002} used to deal with noisy fitness functions
+  \item[Fuzzy matching with solution history] \cite{Davarynejad2010}
+  \item[Fitness inheritance] (passing of fitness values from parents to offspring) to reduce the number of fitness evaluations \cite{Chen2002,Pelikan2004a,Smith1995,Bui2005}
+\end{description}
+
+A fitness model may also be used to guide standard genetic operators such as crossover and mutation as in \cite{Lima2005,Abboud2002,Jin:04b,Rasheed2002,Zhang2005}.
+Other hybrid approaches combine probabilistic models with different algorithms such as that described in \cite{Zhang2007,Pena2004,Sastry2006}.
+
+Imperfections in the model can help by smoothing rugged landscapes \cite{Ong2006,Liang1999,Liang2000,Shakya2006}.
+Selecting low-fitness individuals and also lead to better models \cite{Branke2007,Posik2008,Posik2007,Lima_et_al:2007,Wallin2009,Wu2006}.
+
+\section{Other topics}
+Some related work on classification of problems by difficultly is \cite{Naudts2000,He2015b}. \cite{Mylavarapu2013} considers selection of features for classification of high dimensional data.
+
+The Proximate Optimality Principle (POP) is often cited as a property relating the representation of a problem with the fitness assigned to each solution in the representation.
+Examples include \cite{Li2009,Salhi2007,Zhang2005,Tuzun1999,Yaguchi2011,Sun2014,Niizuma2007,Brownlee2015}.
+POP is often stated in terms like ``good solutions possess some similar structure''\cite{Niizuma2007}. 
+
+\bibliographystyle{plain}
+\bibliography{LitReviewLandscapesSenstivityStructure}
+
+\end{document}
