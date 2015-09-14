@@ -1,7 +1,7 @@
 \documentclass{article}
 
-\title{MitL -- Towards Large Scale Knowledge Discovery:\\ Learning}
-\author{Leandro L. Minku}
+\title{MitL -- Towards Large Scale Knowledge Discovery: Learning}
+\author{Leandro L. Minku (and possibly others in the future)}
 \date{}
 
 \usepackage{natbib}
@@ -16,7 +16,7 @@
 \maketitle
 
 \begin{abstract}
-\noindent\url{https://github.com/MitLware/MitLware-task-allocation/issues/6}\\
+From \url{https://github.com/MitLware/MitLware-task-allocation/issues/6}:
 Write a few paragraphs about existing literature on learning algorithms, in particular learning algorithms able to process large amounts of data. The aim of the literature review is for us to check what sort of techniques a new meta-heuristics framework should cover, including existing techniques and potentially future techniques.
 \end{abstract}
 
@@ -54,22 +54,22 @@ Several classification algorithms exist in the literature, e.g., decision trees 
 
 Potential target outputs when formulating this problem as a regression problem are the distance to the optimal objective value of the final solution provided by the operator / parameter, the fitness of the best solution found by the operator / parameter to the problem instance, or some other numerical value indicating the relative goodness of each operator / parameter to this problem instance. 
 
-Several regression algorithms exist in the literature, e.g., linear regression \ref{Freedman2009}, multi-layer perceptrons \cite{Bishop2006}, k-Nearest Neighbours \cite{MenziesEtAl2014}, etc.  Many of the algorithms originally developed for classification have regression versions, e.g., regression trees \cite{MenziesEtAl2014}, support vector machines \cite{ShaweTaylor2000}, naive bayes \cite{Bishop2006}, etc. Ensembles of learning machines such as Bagging \cite{Breiman1996} and Boosting \cite{Breiman1998} can combine several models with the aim of improving predictive performance and may also be useful in this context.
+Several regression algorithms exist in the literature, e.g., linear regression \cite{Freedman2009}, multi-layer perceptrons \cite{Bishop2006}, k-Nearest Neighbours \cite{MenziesEtAl2014}, etc.  Many of the algorithms originally developed for classification have regression versions, e.g., regression trees \cite{MenziesEtAl2014}, support vector machines \cite{ShaweTaylor2000}, naive bayes \cite{Bishop2006}, etc. Ensembles of learning machines such as Bagging \cite{Breiman1996} and Boosting \cite{Breiman1998} can combine several models with the aim of improving predictive performance and may also be useful in this context.
 
 \subsection{Structural Learning}
 
-Structural learning \cite{Baklr2007}, where one is interested in predicting structural data instead of single values, may also be useful. For instance, one may wish to predict rankings of operators / parameter values, instead of single values. Or, one may wish to predict a tree representing which operator / parameter value to use for different problem instances of a given class of problems. 
+Structural learning \cite{Baklr2007}, where one is interested in predicting structural data instead of single values, may also be useful. For instance, one may wish to predict rankings of operators / parameter values, instead of single values. 
 
 \section{Input Feature Representations}
 \label{sec:input-features}
 
 \subsection{Vectorial Representation}
 
-Most machine learning algorithms work with input features of vectorial format, i.e., the input features must take the form of a vector of numerical, categorical and / or ordinal values. Ordinal values are frequently regarded as numerical values by machine learning algorithms. Categorical attributes are also converted into numerical values in some algorithms such as multilayer perceptrons \cite{Bishop2006}. Non-vectorial data are frequently converted into vectorial format in order to use machine learning algorithms.
+Most machine learning algorithms work with input features of vectorial format, i.e., the input features must take the form of a vector of numerical, categorical and / or ordinal values. Categorical and ordinal attributes are sometimes converted into numerical values in some algorithms such as multilayer perceptrons \cite{Bishop2006}. Non-vectorial data are frequently converted into vectorial format in order to use machine learning algorithms.
 
 \subsection{Graph Representation}
 
-However, there has also been research into other types of input features. For instance, some algorithms are able to manipulate graph structures more directly \cite{Torsello2011,Bai2015}. Graph-based algorithms may be particularly useful when problem instances represent graph problems. There has also been research on structural machine learning 
+There has been research into other types of input features than vectorial format. For instance, some algorithms are able to manipulate graph structures more directly \cite{Torsello2011,Bai2015}. Graph-based algorithms may be particularly useful when problem instances represent graph problems. 
 
 \subsection{Algebraic Machine Learning}
 
@@ -84,6 +84,7 @@ permutation is exploited by the learning process.
 
 
 \section{Data Processing Style}
+\label{sec:learning-types}
 
 \subsection{Offline Learning}
 
@@ -104,7 +105,7 @@ Examples of online learning algorithms not prepared to deal with changes are ITI
 An example of toolbox containing several online learning algorithms is MOA \url{http://moa.cms.waikato.ac.nz/}. A meta-heuritics framework should ideally allow us to easily integrate MOA algorithms.
 
 
-\bibliographystyle{abbrvnat}
+\bibliographystyle{abbrv}
 \bibliography{bibliography}
 
 \end{document}
