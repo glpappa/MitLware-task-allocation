@@ -1,0 +1,110 @@
+\documentclass{article}
+
+\title{MitL -- Towards Large Scale Knowledge Discovery:\\ Learning}
+\author{Leandro L. Minku}
+\date{}
+
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{color}
+
+\newcommand{\remark}[1]{\textcolor{red}{\em #1}}
+
+\newcommand{\ignore}[1]{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent\url{https://github.com/MitLware/MitLware-task-allocation/issues/6}\\
+Write a few paragraphs about existing literature on learning algorithms, in particular learning algorithms able to process large amounts of data. The aim of the literature review is for us to check what sort of techniques a new meta-heuristics framework should cover, including existing techniques and potentially future techniques.
+\end{abstract}
+
+\section{Introduction}
+
+As discussed in our first LSKD meeting (minutes minutes-07-Aug-15.txt), we will view LSKD as an offline activity, as the online case is being covered by ``Solution Trajectory Mining". We will consider that:
+
+\begin{itemize}
+\item there is a (possibly) large repository with information about:
+\begin{itemize}
+\item Problem instances (raw data + features describing them + ...)
+\item Algorithms and parameters used
+\item Results / solutions (chromosome + fitness + ...)
+\end{itemize}
+
+\item LSKD is concerned with mining such repository to select / build appropriate metaheuristics and choose parameters.
+\end{itemize}
+
+With that in mind, this document briefly and informally reviews machine learning algorithms that can be used for mining such repository with the aim of predicting which meta-heuristics or parameters are the most appropriate for a given problem instance. In particular, section \ref{sec:target-output} explains algorithms according to different target output formulations. Section \ref{sec:input-features} explains algorithms according to input feature representation.  Section \ref{sec:learning-types} explains learning algorithms according data processing style. 
+
+\section{Target Output Formulations}
+\label{sec:target-output}
+
+According to the target output, the problem of predicting which meta-heuristics or parameters are the most appropriate for a given problem instance can be formulated as a classification, regression or structural learning problem.
+
+\subsection{Classification}
+
+When formulating this problem as a classification problem, the target output to be predicted is a categorical value. This value could be, for example, the best operator / categorical parameter value to be used \cite{Pappa2014}. Therefore, a training set would need to be derived from the repository containing several examples of problem instances and their corresponding best operator / categorical parameter value. 
+
+Another possible way to formulate this as a classification problem would be to create a different learner for each operator / categorical parameter value. This learner would then predict whether its corresponding operator / categorical parameter value is or is not appropriate for a given problem instance. Therefore, a separate training set would be created for each operator / parameter value, containing several examples of problem instances and whether the operator / parameter value is or is not adequate for this problem instance.
+
+Several classification algorithms exist in the literature, e.g., decision trees \cite{MenziesEtAl2014}, naive-bayes \cite{Bishop2006}, multi-layer perceptrons \cite{Bishop2006}, k-Nearest Neighbours \cite{MenziesEtAl2014}, support vector machines \cite{ShaweTaylor2000}, etc. Ensembles of learning machines such as Bagging \cite{Breiman1996} and Boosting \cite{Breiman1998} can combine several models with the aim of improving predictive performance and may also be useful in this context.
+
+\subsection{Regression}
+
+Potential target outputs when formulating this problem as a regression problem are the distance to the optimal objective value of the final solution provided by the operator / parameter, the fitness of the best solution found by the operator / parameter to the problem instance, or some other numerical value indicating the relative goodness of each operator / parameter to this problem instance. 
+
+Several regression algorithms exist in the literature, e.g., linear regression \ref{Freedman2009}, multi-layer perceptrons \cite{Bishop2006}, k-Nearest Neighbours \cite{MenziesEtAl2014}, etc.  Many of the algorithms originally developed for classification have regression versions, e.g., regression trees \cite{MenziesEtAl2014}, support vector machines \cite{ShaweTaylor2000}, naive bayes \cite{Bishop2006}, etc. Ensembles of learning machines such as Bagging \cite{Breiman1996} and Boosting \cite{Breiman1998} can combine several models with the aim of improving predictive performance and may also be useful in this context.
+
+\subsection{Structural Learning}
+
+Structural learning \cite{Baklr2007}, where one is interested in predicting structural data instead of single values, may also be useful. For instance, one may wish to predict rankings of operators / parameter values, instead of single values. Or, one may wish to predict a tree representing which operator / parameter value to use for different problem instances of a given class of problems. 
+
+\section{Input Feature Representations}
+\label{sec:input-features}
+
+\subsection{Vectorial Representation}
+
+Most machine learning algorithms work with input features of vectorial format, i.e., the input features must take the form of a vector of numerical, categorical and / or ordinal values. Ordinal values are frequently regarded as numerical values by machine learning algorithms. Categorical attributes are also converted into numerical values in some algorithms such as multilayer perceptrons \cite{Bishop2006}. Non-vectorial data are frequently converted into vectorial format in order to use machine learning algorithms.
+
+\subsection{Graph Representation}
+
+However, there has also been research into other types of input features. For instance, some algorithms are able to manipulate graph structures more directly \cite{Torsello2011,Bai2015}. Graph-based algorithms may be particularly useful when problem instances represent graph problems. There has also been research on structural machine learning 
+
+\subsection{Algebraic Machine Learning}
+
+From Markus: Just a placeholder for some future discussion, but we'd ideally still
+also want the standard to allow the description of concrete
+structurally/algebraically rich feature descriptions, e.g. knowing
+that a "feature vector" actually represents a permutation. I believe
+Gisele has recently been looking into structural ML, and I've done some
+work on `algebraic machine learning', where the fact we have a
+permutation is exploited by the learning process. 
+
+
+
+\section{Data Processing Style}
+
+\subsection{Offline Learning}
+
+Most machine learning algorithms process data offline. This means  that they require all training data to be available beforehand in order to perform learning. They usually need to process all data several times during the learning process. Once the learning process is completed, their resulting models cannot be further updated with incoming data. If additional data becomes available over time, they require their models to be rebuilt from scratch with all data received so far. This is acceptable if the  data distributions do not change over time and the data sets are not very large. 
+
+In LSKD for meta-heuristics, there is so far no evidence that the data distributions would change over time for a given problem instance. If the data distributions change over time, mechanisms need to be adopted in order to detect and deal with such changes. 
+
+So far, there may not be any meta-heuristics repository that is too large for being processed by offline machine learning algorithms. However, there is the potential for these repositories to grow very large. If the training sets to be learned by offline learning algorithms are too large, the training process may become very slow. One-pass / online learning algorithms may need to be adopted instead. Another way to speed up the learning is to use a sample of the data set, instead of using all data.
+
+An example of toolbox containing several offline machine learning algorithms is WEKA \url{http://www.cs.waikato.ac.nz/ml/weka/}. A meta-heuritics framework should allow us to easily integrate WEKA algorithms.
+
+\subsection{One-Pass or Online Learning}
+
+Different from offline learning algorithms, one-pass or online learning algorithms process each training example separately upon arrival and then discard it \cite{OzaRussell2001,FernGivan2003}. So, they are able to learn additional incoming examples that may arrive over time. If well designed or integrated with change detection algorithms \cite{GamaEtAl2004,AlippiRoveri2008}, online learning algorithms can adapt to changes in the underlying distribution of the data. As these algorithms process each training example at most once, they can be much faster than offline learning algorithms. 
+
+Examples of online learning algorithms not prepared to deal with changes are ITI lossless decision trees \cite{UtgoffBerkmanClouse1997}, Hoeffding trees \cite{HultenSpencerDomingos}, naive bayes \cite{Bishop2006} and online bagging and boosting \cite{OzaRussell2001}. Examples of online algorithms preparred to deal with changes are diversity for dealing with drifts \cite{MinkuYao2012}, dynamic weighted majority \cite{KolterMaloof2007}, drift detection method \cite{GamaEtAl2004} and early drift detection method \cite{GarciaEtAl2006}.
+
+An example of toolbox containing several online learning algorithms is MOA \url{http://moa.cms.waikato.ac.nz/}. A meta-heuritics framework should ideally allow us to easily integrate MOA algorithms.
+
+
+\bibliographystyle{abbrvnat}
+\bibliography{bibliography}
+
+\end{document}
